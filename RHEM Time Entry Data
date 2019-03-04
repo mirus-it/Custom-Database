@@ -1,0 +1,41 @@
+/*
+Name:			RHEM Time Entry Data
+Version:		0.1(first draft)
+Date Created:	04/03/2019
+Creator:		Paul O'Connor - BI Analyst
+Owner:			BI - Analyst
+Approved Date:	04/03/2019
+Approved By: Paul O'Connor
+
+*/
+SELECT
+            trpt.Time_RecID                                                                                    AS 'id'
+,           trpt.company_name                                                                                  AS 'Company Name'
+,           trpt.work_type                                                                                     AS 'Work Type'
+,           trpt.hours_actual                                                                                  AS 'Hours Actual'
+,           trpt.SR_Service_RecID                                                                              AS 'Ticket Number'
+,           trpt.Notes                                                                                         AS 'Note'
+,           CAST(DATEADD (mi, DATEDIFF (mi, GETUTCDATE (), GETDATE ()), trpt.Time_Start_UTC) AS SMALLDATETIME) AS 'Date Time Start'
+,           CAST(DATEADD (mi, DATEDIFF (mi, GETUTCDATE (), GETDATE ()), trpt.Time_End_UTC) AS SMALLDATETIME)   AS 'Date Time End'
+,           comrpt.Company_Status_Desc                                                                         AS 'Company Status'
+,           srpt.ServiceType                                                                                   AS 'Ticket Type'
+,           srpt.status_description                                                                            AS 'Ticket Status'
+,           srpt.ServiceSubType                                                                                AS 'Ticket Sub Type'
+,           CASE
+                WHEN comrpt.Company_Type_Desc LIKE 'Client - Yellow%' THEN 'Yellow'
+                WHEN comrpt.Company_Type_Desc LIKE 'Client - Blue%' THEN 'Blue'
+                WHEN comrpt.Company_Type_Desc LIKE 'Client - Red%' THEN 'Red'
+                ELSE comrpt.Company_Type_Desc
+            END                                                                                                AS 'Company Type'
+,           trpt.first_name + ' ' + trpt.last_name                                                             AS 'Member Full Name'
+FROM        v_rpt_Time                       AS trpt WITH (NOLOCK)
+LEFT JOIN   v_rpt_Service                    AS srpt WITH (NOLOCK) ON srpt.SR_Service_RecID = trpt.SR_Service_RecID
+LEFT JOIN   v_rpt_Company                    AS comrpt WITH (NOLOCK) ON comrpt.Company_RecID = trpt.Company_RecID
+LEFT JOIN   Company_User_Defined_Field_Value AS RHEMudf WITH (NOLOCK) ON comrpt.Company_RecID = RHEMudf.Company_RecID
+                                                                         AND RHEMudf.User_Defined_Field_RecID IN (42)
+WHERE
+            trpt.Date_Start >= DATEADD (mm, -12, CURRENT_TIMESTAMP)
+            AND trpt.company_name NOT IN ('Mirus IT Solutions Limited', 'Catchall')
+            AND trpt.work_type IN ('Support', 'Antivirus', 'Ransomware')
+            AND srpt.ServiceType IN ('Problem', 'Monitoring', 'Incident')
+            AND CASE WHEN RHEMudf.User_Defined_Field_Value = 'true' THEN 1 ELSE 0 END = 0
