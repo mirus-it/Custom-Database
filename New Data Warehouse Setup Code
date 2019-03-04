@@ -1,0 +1,244 @@
+CREATE TABLE Tickets_Core_Data
+(   ticketref             INT             NOT NULL
+,   location              NVARCHAR (MAX)  NULL
+,   business_group        NVARCHAR (MAX)  NULL
+,   service_board         NVARCHAR (MAX)  NULL
+,   company_site          NVARCHAR (MAX)  NULL
+,   service_location      NVARCHAR (MAX)  NULL
+,   status                NVARCHAR (MAX)  NULL
+,   source                NVARCHAR (MAX)  NULL
+,   closed_flag           BIT             NULL DEFAULT 0
+,   type                  NVARCHAR (MAX)  NULL
+,   subtype               NVARCHAR (MAX)  NULL
+,   serviceitem           NVARCHAR (MAX)  NULL
+,   company               NVARCHAR (MAX)  NULL
+,   contact               NVARCHAR (MAX)  NULL
+,   summary               NVARCHAR (MAX)  NULL
+,   agreement             NVARCHAR (MAX)  NULL
+,   client_manager        NVARCHAR (MAX)  NULL
+,   hours_logged          DECIMAL (18, 2) NULL
+,   hours_logged_billable DECIMAL (18, 2) NULL
+,   parent_ticketref      INT             NULL
+,   assigned_resources    NVARCHAR (MAX)  NULL
+,   priority              NVARCHAR (MAX)  NULL
+,   initial_issue         NVARCHAR (MAX)  NULL
+,   company_recid         INT             NULL
+,   contact_recid         INT             NULL
+,   age                   INT             NULL
+,   record_type           NVARCHAR (MAX)  NULL
+,   customer_updated      NVARCHAR (MAX)  NULL
+,   SLA_Status            NVARCHAR (MAX)  NULL
+,   company_type          NVARCHAR (MAX)  NULL, ) ;
+
+CREATE TABLE Tickets_Extended_Data
+(   ticketref                  INT NOT NULL
+,   major_incident_flag        BIT NULL DEFAULT 0
+,   opportunity_id             INT NULL
+,   time_entry_count           INT NULL
+,   frr_flag                   BIT NULL DEFAULT 0
+,   reporting_exception_flag   BIT NULL DEFAULT 0
+,   resolved_same_day_flag     BIT NULL DEFAULT 0
+,   survey_sent_flag           BIT NULL DEFAULT 0
+,   has_resolution_flag        BIT NULL DEFAULT 0
+,   missing_subtype_flag       BIT NULL DEFAULT 0
+,   missing_serviceitem_flag   BIT NULL DEFAULT 0
+,   missing_agreement_flag     BIT NULL DEFAULT 0
+,   automated_flag             BIT NULL DEFAULT 0
+,   company_tier               INT NULL
+,   config_attached_flag       BIT NULL DEFAULT 0
+,   weekdays_since_last_update INT NULL
+,   fsm_informed_flag          BIT NULL DEFAULT 0
+,   standard_filter_flag       BIT NULL DEFAULT 0
+,   started_as_streamline_flag BIT NULL DEFAULT 0
+,   board_change_count         INT NULL
+,   survey_score               INT NULL, ) ;
+
+CREATE TABLE Time_Entries
+(   time_recid            INT             NOT NULL
+,   ticketref             INT             NULL
+,   member_id             NVARCHAR (MAX)  NULL
+,   resource_name         NVARCHAR (MAX)  NULL
+,   start_date_time       SMALLDATETIME   NULL
+,   end_date_time         SMALLDATETIME   NULL
+,   entered_date_time     SMALLDATETIME   NULL
+,   work_type             NVARCHAR (MAX)  NULL
+,   minutes_logged        INT             NULL
+,   hours_logged          DECIMAL (18, 2) NULL
+,   hours_logged_billable DECIMAL (18, 2) NULL
+,   agreement             NVARCHAR (MAX)  NULL
+,   note                  NVARCHAR (MAX)  NULL
+,   internal_note_flag    BIT             NULL DEFAULT 0, ) ;
+
+CREATE TABLE Time_Entries_Extended_Data
+(   time_recid             INT           NOT NULL
+,   time_sheet             INT           NULL
+,   time_entry_status      NVARCHAR (20) NULL
+,   time_sheet_status      NVARCHAR (20) NULL
+,   hours_deducted         INT           NULL
+,   resolution_flag        BIT           NULL DEFAULT 0
+,   contains_document_flag BIT           NULL DEFAULT 0
+,   document_is_email_Flag BIT           NULL DEFAULT 0, ) ;
+
+CREATE TABLE Resource_Data
+(   member_recid           INT             NOT NULL
+,   resource_name          NVARCHAR (50)   NULL
+,   job_title              NVARCHAR (100)  NULL
+,   email_address          NVARCHAR (100)  NULL
+,   inactive_flag          BIT             NULL DEFAULT 0
+,   line_manager           NVARCHAR (100)  NULL
+,   daily_capacity         DECIMAL (18, 2) NULL
+,   minimum_daily_capacity DECIMAL (18, 2) NULL
+,   hourly_cost            DECIMAL (18, 2) NULL
+,   hourly_sell            DECIMAL (18, 2) NULL
+,   default_board          NVARCHAR (100)  NULL
+,   resource_type          NVARCHAR (50)   NULL
+,   date_employed          DATE            NULL
+,   date_left              DATE            NULL, ) ;
+
+CREATE TABLE Ticket_Resoluton_Data
+(   ticketref                                   INT             NOT NULL
+,   resolved_by                                 NVARCHAR (100)  NULL
+,   resolved_date_time                          SMALLDATETIME   NULL
+,   resolution                                  NVARCHAR (MAX)  NULL
+,   has_resolution_flag                         BIT             NULL DEFAULT 0
+,   resolved_age                                DECIMAL (18, 2) NULL
+,   minutes_to_resolution                       INT             NULL
+,   hours_to_resolution                         DECIMAL (18, 2) NULL
+,   resolve_by_date_time                        SMALLDATETIME   NULL
+,   minutes_remaining_to_resolution_expectation INT             NULL, ) ;
+
+CREATE TABLE Ticket_Closed_Data
+(   ticketref         INT            NOT NULL
+,   closed_by         NVARCHAR (100) NULL
+,   closed_date_time  SMALLDATETIME
+,   closed_age        DECIMAL (18, 2)
+,   minutes_to_closed INT            NULL
+,   hours_to_closed   DECIMAL (18, 2), ) ;
+
+CREATE TABLE Ticket_Response_Data
+(   ticketref                                 INT             NOT NULL
+,   responded_by                              NVARCHAR (100)  NULL
+,   responded_date_time                       SMALLDATETIME   NULL
+,   response_sla_status                       NVARCHAR (20)   NULL
+,   minutes_to_response                       INT             NULL
+,   hours_to_response                         DECIMAL (18, 2) NULL
+,   sla_breach_flag                           BIT             NULL DEFAULT 0
+,   respond_by_date_time                      SMALLDATETIME   NULL
+,   minutes_remaining_to_response_expectation INT             NULL, ) ;
+
+CREATE TABLE Ticket_Entered_Data
+(   ticketref            INT            NOT NULL
+,   entered_by           NVARCHAR (100) NULL
+,   entered_date_time    SMALLDATETIME  NULL
+,   automated_entry_flag BIT            NULL DEFAULT 0, ) ;
+
+CREATE TABLE Companies_Data
+(   company_recid           INT            NOT NULL
+,   company_id              NVARCHAR (100) NULL
+,   company_name            NVARCHAR (100) NULL
+,   primary_contact         NVARCHAR (100) NULL
+,   billing_contact         NVARCHAR (100) NULL
+,   telephony_customer_flag BIT            NULL DEFAULT 0
+,   print_customer_flag     BIT            NULL DEFAULT 0
+,   IT_customer_flag        BIT            NULL DEFAULT 0
+,   company_status          NVARCHAR (50)  NULL
+,   company_inactive_flag   BIT            NULL DEFAULT 0
+,   parent_company          NVARCHAR (100) NULL
+,   parent_company_recid    INT            NULL
+,   company_type            NVARCHAR (MAX) NULL, ) ;
+
+CREATE TABLE Contacts_Data
+(   contact_recid         INT            NOT NULL
+,   contact_name          NVARCHAR (100) NULL
+,   contact_email         NVARCHAR (100) NULL
+,   contact_phone_number  NVARCHAR (20)  NULL
+,   company_recid         INT            NULL
+,   contact_job_title     NVARCHAR (100) NULL
+,   primary_contact_flag  BIT            NULL DEFAULT 0
+,   billing_contact_flag  BIT            NULL DEFAULT 0
+,   do_not_bill_flag      BIT            NULL DEFAULT 0
+,   contact_inactive_flag BIT            NULL DEFAULT 0
+,   company_address_recid INT            NULL, ) ;
+
+CREATE TABLE Documents_Data
+(   document_recid                   INT            NOT NULL
+,   ticketref                        INT            NULL
+,   time_recid                       INT            NULL
+,   document_name                    NVARCHAR (MAX) NULL
+,   document_filename                NVARCHAR (MAX) NULL
+,   document_file_extension          NVARCHAR (10)  NULL
+,   document_is_email_flag           BIT            NULL DEFAULT 0
+,   document_on_customer_portal_flag BIT            NULL DEFAULT 0
+,   document_upload_date_time        SMALLDATETIME  NULL
+,   document_uploaded_by             NVARCHAR (100) NULL, ) ;
+
+CREATE TABLE Reports_Data
+(   report_id                     UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID ()
+,   report_name                   NVARCHAR (MAX)   NULL
+,   report_busgroup               NVARCHAR (50)    NULL
+,   report_owner                  NVARCHAR (100)   NULL
+,   date_report_created           DATE             NULL
+,   customer_facing_flag          BIT              NULL DEFAULT 0
+,   delivery_method               NVARCHAR (50)    NULL
+,   delivery_frequency            NVARCHAR (50)    NULL
+,   next_delivery_date            DATE             NULL
+,   delivery_recipients           NVARCHAR (MAX)   NULL
+,   change_control__required_flag BIT              NULL DEFAULT 0
+,   reporting_system              NVARCHAR (50)    NULL
+,   key_report_flag               BIT              NULL DEFAULT 0, ) ;
+
+CREATE TABLE Ticket_Idle_Data
+(   ticketref               INT            NOT NULL
+,   seven_day_idle_count    INT            NULL -- Intended to show the amount of times a ticket went idle for 7 days
+,   longest_days_idle       INT            NULL
+,   busgroup_last_idle_with NVARCHAR (100) NULL -- intended to show where the ticket was when it last went idle with
+) ;
+
+CREATE TABLE Reporting_Exceptions
+(   ticketref                    INT            NOT NULL
+,   engineer_exception_flag      BIT            NULL DEFAULT 0
+,   teamleader_exception_flag    BIT            NULL DEFAULT 0
+,   manager_exception_flag       BIT            NULL DEFAULT 0
+,   smt_exception                BIT            NULL DEFAULT 0
+,   exception_reason             NVARCHAR (MAX) NULL
+,   exceptioned_by               NVARCHAR (100) NULL
+,   core_reports_exception_flag  BIT            NULL DEFAULT 0
+,   other_reports_exception_flag BIT            NULL DEFAULT 0
+,   exception_from_all_flag      BIT            NULL DEFAULT 0
+,   exception_date_time          SMALLDATETIME  NULL) ;
+
+CREATE TABLE Escalation_Data
+(   ticketref                  INT            NOT NULL
+,   internal_escalation_flag   BIT            NULL DEFAULT 0
+,   apprentice_escalation_flag BIT            NULL DEFAULT 0
+,   escalated_by               NVARCHAR (100) NULL
+,   escalation_date_time       SMALLDATETIME  NULL
+,   escalation_reason          NVARCHAR (MAX) NULL
+,   deescalated_flag           BIT            NULL DEFAULT 0
+,   deescalated_by             NVARCHAR (100) NULL
+,   deescalated_date_time      SMALLDATETIME  NULL) ;
+
+CREATE TABLE Field_Visits
+(   ticketref                INT            NOT NULL
+,   schedule_ref             INT            NULL
+,   scheduled_by             NVARCHAR (100) NULL
+,   scheduled_resource       NVARCHAR (100) NULL
+,   schedule_date            DATE           NULL
+,   schedule_start_date_time SMALLDATETIME  NULL
+,   schedule_end_date_time   SMALLDATETIME  NULL
+,   full_day_schedule_flag   BIT            NULL DEFAULT 0
+,   half_day_schedule_flag   BIT            NULL DEFAULT 0
+,   site_cover_flag          BIT            NULL DEFAULT 0
+,   date_scheduled           SMALLDATETIME  NULL, ) ;
+
+CREATE TABLE Survey_Data
+(   ticketref                      INT            NOT NULL
+,   survey_ref                     INT            NULL
+,   date_time_survey_sent          SMALLDATETIME  NULL
+,   date_time_survey_response      SMALLDATETIME  NULL
+,   survey_has_response_flag       BIT            NULL DEFAULT 0
+,   survey_rating                  NVARCHAR (20)  NULL
+,   survey_inactive_flag           BIT            NULL DEFAULT 0
+,   survey_investigation_ticketref INT            NULL  -- only applied to responded surveys that are not rated good and without a comment. anything else raises a ticket
+,   survey_resource                NVARCHAR (100) NULL
+,   ticket_survey_count            INT            NULL) ;
